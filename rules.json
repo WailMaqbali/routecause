@@ -1,0 +1,10 @@
+[
+  {"id": "R01", "if": {"scope": "one"}, "then": {"fact": {"local_problem": "yes"}},
+   "weight": 1.0, "why": "Only one device is affected, so the fault is likely local to it"},
+  {"id": "R02", "if": {"local_problem": "yes", "symptom": "no_internet", "change": "new_device"},
+   "then": {"diagnosis": "DHCP/IP conflict"}, "weight": 0.65,
+   "why": "A new device joined and this one has no internet, which fits a duplicate IP"},
+  {"id": "R03", "if": {"local_problem": "yes", "symptom": "no_internet"},
+   "then": {"diagnosis": "DHCP/IP conflict"}, "weight": 0.3,
+   "why": "A single device with no internet can be an address lease problem"}
+]
