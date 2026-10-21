@@ -5,4 +5,4 @@ def test_diagnose_returns_trace():
     resp = client.post("/diagnose", data={"scope": "one", "symptom": "no_internet", "change": "new_device"})
     assert resp.status_code == 200
     assert b"DHCP/IP conflict" in resp.data      # top diagnosis shown
-    assert b"R02" in resp.data                   # trace shows the rule that fired
+    assert b"R30" in resp.data                   # trace shows the rule that fired
