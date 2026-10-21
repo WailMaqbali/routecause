@@ -1,0 +1,25 @@
+<!doctype html>
+<title>RouteCause result</title>
+<style>
+  body{font-family:system-ui;max-width:640px;margin:2rem auto;padding:0 1rem}
+  table{border-collapse:collapse;width:100%} td,th{border:1px solid #ccc;padding:.4rem;text-align:left}
+</style>
+<h1>Likely cause: {{ top }}</h1>
+<p><b>What's happening:</b> {{ cause }}</p>
+<p><b>Try this:</b> {{ fix }}</p>
+
+<h2>Ranked diagnoses</h2>
+<ol>
+  {% for name, conf in ranked %}
+  <li>{{ name }}: {{ (conf * 100) | round | int }}%</li>
+  {% endfor %}
+</ol>
+
+<h2>Why (explanation trace)</h2>
+<table>
+  <tr><th>Rule</th><th>Matched</th><th>Reason</th></tr>
+  {% for t in trace %}
+  <tr><td>{{ t.rule }}</td><td>{{ t.matched }}</td><td>{{ t.why }}</td></tr>
+  {% endfor %}
+</table>
+<p><a href="/">Start again</a></p>

@@ -1,0 +1,21 @@
+<!doctype html>
+<title>RouteCause</title>
+<style>
+  body{font-family:system-ui;max-width:640px;margin:2rem auto;padding:0 1rem}
+  fieldset{margin-bottom:1rem;border:1px solid #ccc;border-radius:6px}
+  label{display:block;margin:.25rem 0}
+  button{padding:.6rem 1.2rem;font-size:1rem}
+</style>
+<h1>RouteCause</h1>
+<p>Answer the questions below to diagnose your home Wi-Fi problem.</p>
+<form method="post" action="/diagnose">
+  {% for key, (prompt, options) in questions.items() %}
+  <fieldset>
+    <legend>{{ prompt }}</legend>
+    {% for value, label in options.items() %}
+    <label><input type="radio" name="{{ key }}" value="{{ value }}" required> {{ label }}</label>
+    {% endfor %}
+  </fieldset>
+  {% endfor %}
+  <button type="submit">Diagnose</button>
+</form>
