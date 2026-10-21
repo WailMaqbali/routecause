@@ -4,8 +4,9 @@ A rule-based expert system that diagnoses common home Wi-Fi and home-network fau
 
 Built for ICT206 Intelligent Systems, Murdoch University.
 
-<!-- TODO: add a screenshot of the result page: docs/screenshot.png, then uncomment -->
-<!-- ![RouteCause result page](docs/screenshot.png) -->
+![Questionnaire page](docs/questionnaire.png)
+![Result page](docs/result.png)
+![Explanation trace](docs/trace.png)
 
 ## The problem
 
