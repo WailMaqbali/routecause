@@ -1,10 +1,47 @@
 [
-  {"id": "R01", "if": {"scope": "one"}, "then": {"fact": {"local_problem": "yes"}},
-   "weight": 1.0, "why": "Only one device is affected, so the fault is likely local to it"},
-  {"id": "R02", "if": {"local_problem": "yes", "symptom": "no_internet", "change": "new_device"},
-   "then": {"diagnosis": "DHCP/IP conflict"}, "weight": 0.65,
-   "why": "A new device joined and this one has no internet, which fits a duplicate IP"},
-  {"id": "R03", "if": {"local_problem": "yes", "symptom": "no_internet"},
-   "then": {"diagnosis": "DHCP/IP conflict"}, "weight": 0.3,
-   "why": "A single device with no internet can be an address lease problem"}
+ {"id":"R01","if":{"scope":"one"},"then":{"fact":{"local_problem":"yes"}},"weight":1.0,"why":"Only one device is affected, so the fault is likely local to it"},
+ {"id":"R02","if":{"scope":"most"},"then":{"fact":{"network_wide":"yes"}},"weight":1.0,"why":"Most devices are affected, so the fault is likely in the network"},
+ {"id":"R03","if":{"network_wide":"yes","wired":["no","na"]},"then":{"fact":{"wifi_only":"yes"}},"weight":1.0,"why":"Wired devices are fine or absent, so the fault is likely in the Wi-Fi layer"},
+ {"id":"R04","if":{"network_wide":"yes","wired":"yes"},"then":{"fact":{"wired_also":"yes"}},"weight":1.0,"why":"Wired devices are also affected, so the fault is likely at the router or beyond"},
+
+ {"id":"R10","if":{"power":"off"},"then":{"diagnosis":"Router power/hardware fault"},"weight":0.9,"why":"Router power light is off"},
+ {"id":"R11","if":{"power":"red"},"then":{"diagnosis":"Router power/hardware fault"},"weight":0.6,"why":"A red/orange power light usually signals a hardware or boot fault"},
+ {"id":"R12","if":{"wan":["off","red"],"wired_also":"yes"},"then":{"diagnosis":"WAN link down"},"weight":0.85,"why":"WAN light is off/red and wired devices are also affected, so the internet link itself is down"},
+ {"id":"R13","if":{"wan":"red","network_wide":"yes"},"then":{"diagnosis":"WAN link down"},"weight":0.7,"why":"Red WAN light with most devices affected points to a lost internet connection"},
+ {"id":"R14","if":{"wan":"red","change":"power_cut"},"then":{"diagnosis":"WAN link down"},"weight":0.5,"why":"WAN fault right after a power event, so the modem may not have resynced"},
+ {"id":"R15","if":{"wired_also":"yes","wan":"green","symptom":["no_internet","slow"]},"then":{"diagnosis":"Router needs restart"},"weight":0.5,"why":"Wired and Wi-Fi both affected but the WAN light is healthy, so the router may be hung"},
+ {"id":"R16","if":{"network_wide":"yes","wan":"green","change":"power_cut"},"then":{"diagnosis":"Router needs restart"},"weight":0.4,"why":"Network-wide fault after a power event with a healthy WAN light"},
+ {"id":"R17","if":{"network_wide":"yes","power":"flashing"},"then":{"diagnosis":"Router needs restart"},"weight":0.4,"why":"A flashing power light can mean the router is stuck booting or overheating"},
+
+ {"id":"R20","if":{"change":"firmware","network_wide":"yes"},"then":{"diagnosis":"Faulty firmware update"},"weight":0.6,"why":"Network-wide problems began right after a firmware update"},
+ {"id":"R21","if":{"change":"firmware","symptom":["dropouts","slow","no_connection"]},"then":{"diagnosis":"Faulty firmware update"},"weight":0.25,"why":"This symptom started right after a firmware update"},
+
+ {"id":"R30","if":{"local_problem":"yes","symptom":"no_internet","change":"new_device"},"then":{"diagnosis":"DHCP/IP conflict"},"weight":0.65,"why":"A new device joined and this one connects with no internet, which fits a duplicate IP"},
+ {"id":"R31","if":{"local_problem":"yes","symptom":"no_internet"},"then":{"diagnosis":"DHCP/IP conflict"},"weight":0.3,"why":"One device with no internet can be an address lease problem"},
+
+ {"id":"R40","if":{"symptom":"some_sites","wan":"green"},"then":{"diagnosis":"DNS failure"},"weight":0.65,"why":"Only some sites fail while the internet link is healthy, which fits a DNS problem"},
+ {"id":"R41","if":{"symptom":"some_sites","network_wide":"yes"},"then":{"diagnosis":"DNS failure"},"weight":0.2,"why":"Site-specific failures across devices point to the shared DNS server"},
+
+ {"id":"R50","if":{"signal":"weak_far","symptom":["dropouts","slow","no_connection"]},"then":{"diagnosis":"Weak signal/distance"},"weight":0.7,"why":"Weak signal far from the router with this symptom"},
+ {"id":"R51","if":{"signal":"weak_far","local_problem":"yes"},"then":{"diagnosis":"Weak signal/distance"},"weight":0.2,"why":"Only the far-away device is affected"},
+ {"id":"R52","if":{"signal":"weak_far","timing":"always"},"then":{"diagnosis":"Weak signal/distance"},"weight":0.15,"why":"The problem is constant, which suits a fixed range issue"},
+
+ {"id":"R60","if":{"timing":"evening","wifi_only":"yes","signal":"strong_near","symptom":"slow"},"then":{"diagnosis":"Channel congestion"},"weight":0.6,"why":"Slow in the evening on Wi-Fi only despite strong signal suggests crowded channels from neighbours"},
+ {"id":"R61","if":{"timing":"evening","wifi_only":"yes","load":["low","medium"]},"then":{"diagnosis":"Channel congestion"},"weight":0.3,"why":"Evening Wi-Fi trouble without heavy use in the home points outside the home"},
+ {"id":"R62","if":{"timing":"evening","wifi_only":"yes","symptom":"dropouts"},"then":{"diagnosis":"Channel congestion"},"weight":0.2,"why":"Evening Wi-Fi drop-outs fit peak-time interference"},
+ {"id":"R63","if":{"symptom":"dropouts","timing":"random","wifi_only":"yes","signal":["weak_near","strong_near"]},"then":{"diagnosis":"2.4GHz interference"},"weight":0.55,"why":"Random Wi-Fi drop-outs near the router fit interference from microwaves, cordless phones or Bluetooth"},
+ {"id":"R64","if":{"symptom":"dropouts","timing":"random","wifi_only":"yes"},"then":{"diagnosis":"2.4GHz interference"},"weight":0.2,"why":"Random Wi-Fi-only drop-outs"},
+
+ {"id":"R70","if":{"load":"high","symptom":["slow","dropouts"],"network_wide":"yes"},"then":{"diagnosis":"Bandwidth saturation"},"weight":0.55,"why":"Many devices streaming or downloading and everything is slow"},
+ {"id":"R71","if":{"load":"high","timing":"evening"},"then":{"diagnosis":"Bandwidth saturation"},"weight":0.2,"why":"Heavy household use at peak time"},
+ {"id":"R72","if":{"load":"high","speedtest":"matches"},"then":{"diagnosis":"Bandwidth saturation"},"weight":0.2,"why":"The plan delivers its full speed, so the line is being shared out"},
+
+ {"id":"R80","if":{"local_problem":"yes","signal":"strong_near","symptom":["no_connection","dropouts","slow"]},"then":{"diagnosis":"Device adapter/settings fault"},"weight":0.55,"why":"Strong signal and only one device affected points to that device's Wi-Fi adapter or settings"},
+ {"id":"R81","if":{"local_problem":"yes","signal":"weak_near"},"then":{"diagnosis":"Device adapter/settings fault"},"weight":0.4,"why":"Weak signal right beside the router on one device suggests a poor adapter or antenna"},
+
+ {"id":"R90","if":{"speedtest":"low","wired_also":"yes","wan":"green"},"then":{"diagnosis":"Plan/speed mismatch"},"weight":0.65,"why":"Speed is below the plan even over a healthy wired link"},
+ {"id":"R91","if":{"speedtest":"low","change":"plan"},"then":{"diagnosis":"Plan/speed mismatch"},"weight":0.3,"why":"Speed is low after a plan change"},
+ {"id":"R92","if":{"speedtest":"low","symptom":"slow","wired_also":"yes"},"then":{"diagnosis":"Plan/speed mismatch"},"weight":0.2,"why":"Slow on all connection types and the test confirms it"},
+
+ {"id":"R99","if":{"scope":["one","most"]},"then":{"diagnosis":"Undetermined"},"weight":0.1,"why":"Fallback: generic advice applies when nothing else matches strongly"}
 ]
