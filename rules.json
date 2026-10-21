@@ -39,7 +39,7 @@
  {"id":"R80","if":{"local_problem":"yes","signal":"strong_near","symptom":["no_connection","dropouts","slow"]},"then":{"diagnosis":"Device adapter/settings fault"},"weight":0.55,"why":"Strong signal and only one device affected points to that device's Wi-Fi adapter or settings"},
  {"id":"R81","if":{"local_problem":"yes","signal":"weak_near"},"then":{"diagnosis":"Device adapter/settings fault"},"weight":0.4,"why":"Weak signal right beside the router on one device suggests a poor adapter or antenna"},
 
- {"id":"R90","if":{"speedtest":"low","wired_also":"yes","wan":"green"},"then":{"diagnosis":"Plan/speed mismatch"},"weight":0.65,"why":"Speed is below the plan even over a healthy wired link"},
+ {"id":"R90","if":{"speedtest":"low","wired_also":"yes","wan":"green","timing":"always"},"then":{"diagnosis":"Plan/speed mismatch"},"weight":0.65,"why":"Speed is constantly below the plan even over a healthy wired link"},
  {"id":"R91","if":{"speedtest":"low","change":"plan"},"then":{"diagnosis":"Plan/speed mismatch"},"weight":0.3,"why":"Speed is low after a plan change"},
  {"id":"R92","if":{"speedtest":"low","symptom":"slow","wired_also":"yes"},"then":{"diagnosis":"Plan/speed mismatch"},"weight":0.2,"why":"Slow on all connection types and the test confirms it"},
 
